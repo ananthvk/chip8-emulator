@@ -1,7 +1,8 @@
 #ifndef OPCODE_HELPERS_H_
 #define OPCODE_HELPERS_H_
-#include<stdarg.h>
-#include<stdint.h>
+#include <stdarg.h>
+#include <stdint.h>
+
 #include "vm.h"
 
 extern int verbose_enabled;
@@ -14,7 +15,7 @@ uint8_t get_constant_N(uint16_t op);
 uint8_t get_constant_NN(uint16_t op);
 uint16_t get_constant_NNN(uint16_t op);
 
-struct opcode_args{
+struct opcode_args {
     chip8_vm *vm;
     uint16_t op;
     uint8_t X;

@@ -1,6 +1,6 @@
 #ifndef VM_H_
 #define VM_H_
-#include<stdint.h>
+#include <stdint.h>
 
 // Memory limit for the VM, should not exceed 65535
 // as PC, program counter is 16 bits unsigned integer
@@ -8,13 +8,12 @@
 // Location 512
 #define VM_START_ADDRESS 0x200
 #define VM_NUMBER_OF_REGISTERS 16
-// Stack size for the VM, should not exceed 255 
+// Stack size for the VM, should not exceed 255
 // as stack pointer is 8 bits and its max value is 255
 #define VM_STACK_SIZE 16
 #define HEX_DISPLAY_SIZE 4
 
-
-struct chip8_vm{
+struct chip8_vm {
     // Memory, register and stacks
     uint8_t memory[VM_MEMORY_SIZE];
     uint8_t registers[VM_NUMBER_OF_REGISTERS];
@@ -25,7 +24,7 @@ struct chip8_vm{
     uint8_t timer_sound;
     uint16_t I;
     // Program counter
-    uint16_t PC; 
+    uint16_t PC;
     // Stack pointer
     uint8_t SP;
 };
@@ -38,5 +37,5 @@ uint8_t get_byte(chip8_vm *vm, uint16_t address);
 uint16_t vm_get_instruction(chip8_vm *vm);
 int vm_advance_program_counter(chip8_vm *vm, uint16_t delta);
 void vm_panic(const char *message, int exit_code);
-void verbose_opcode(chip8_vm *vm, uint16_t op, const char * format, ...);
+void verbose_opcode(chip8_vm *vm, uint16_t op, const char *format, ...);
 #endif

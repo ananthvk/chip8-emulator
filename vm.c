@@ -1,7 +1,8 @@
 #include "vm.h"
+
 #include <stdio.h>
-#include<string.h>
 #include <stdlib.h>
+#include <string.h>
 void vm_init(chip8_vm *vm)
 {
     vm->PC = VM_START_ADDRESS;
@@ -16,13 +17,12 @@ void vm_init(chip8_vm *vm)
 int vm_load(chip8_vm *vm, const char *filename)
 {
     FILE *fp = fopen(filename, "rb");
-    if (!fp)
-    {
+    if (!fp) {
         return 0;
     }
-    if (vm)
-    {
-        return fread(vm->memory + VM_START_ADDRESS, 1, VM_MEMORY_SIZE - VM_START_ADDRESS, fp);
+    if (vm) {
+        return fread(vm->memory + VM_START_ADDRESS, 1,
+                     VM_MEMORY_SIZE - VM_START_ADDRESS, fp);
     }
     vm_panic("vm is NULL, Internal Error in vm_load", 6);
     return 0;
@@ -30,8 +30,7 @@ int vm_load(chip8_vm *vm, const char *filename)
 
 uint8_t get_byte(chip8_vm *vm, uint16_t address)
 {
-    if (!vm)
-        vm_panic("INTERNAL ERROR - vm NULL", 1);
+    if (!vm) vm_panic("INTERNAL ERROR - vm NULL", 1);
 
     if (address >= VM_MEMORY_SIZE)
         vm_panic("Out of bounds memory access in get_byte", 2);
@@ -45,13 +44,11 @@ uint16_t vm_get_instruction(chip8_vm *vm)
 }
 int vm_advance_program_counter(chip8_vm *vm, uint16_t delta)
 {
-    if ((vm->PC + delta) < VM_MEMORY_SIZE)
-    {
+    if ((vm->PC + delta) < VM_MEMORY_SIZE) {
         vm->PC += delta;
         return 1;
     }
-    else
-    {
+    else {
         return 0;
     }
 }

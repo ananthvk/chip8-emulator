@@ -1,6 +1,7 @@
-#include<stdint.h>
 #include "opcode_helpers.h"
-#include<stdio.h>
+
+#include <stdint.h>
+#include <stdio.h>
 int verbose_enabled = 1;
 
 void print_opcode(uint16_t op) { printf("0x%0*x |", HEX_DISPLAY_SIZE, op); }

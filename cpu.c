@@ -8,7 +8,10 @@
 
 int cpu_execute(chip8_vm *vm, uint16_t op)
 {
-    if (!vm) return 0;
+    if (!vm) {
+        vm_panic("vm is NULL, check the program", 8);
+    }
+
     // Gets the most significant 4 bits bits from the opcode
     // to determine the function to call.
     opcode_args args;

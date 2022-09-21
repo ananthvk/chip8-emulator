@@ -1,8 +1,9 @@
 #ifndef OPCODES_8XXX_H_
 #define OPCODES_8XXX_H_
-#include "vm.h"
+#include <stdint.h>
+
 #include "opcode_helpers.h"
-#include<stdint.h>
+#include "vm.h"
 
 int op_8xxx_0(opcode_args arg);
 int op_8xxx_1(opcode_args arg);

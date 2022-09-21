@@ -106,7 +106,7 @@ int op_9xxx(opcode_args arg)
 
 int op_axxx(opcode_args arg)
 {
-    verbose_opcode(arg.vm, arg.op, "I = 0x%0*x", HEX_DISPLAY_SIZE, arg.NNN );
+    verbose_opcode(arg.vm, arg.op, "I = 0x%0*x", HEX_DISPLAY_SIZE, arg.NNN);
     return 1;
 }
 
@@ -130,7 +130,6 @@ int op_dxxx(opcode_args arg)
 
 int op_exxx(opcode_args arg)
 {
-
     if (arg.NN == 0x9E) {
         verbose_opcode(arg.vm, arg.op, "if (key() == V%u) skip", arg.X);
         return 1;
@@ -146,7 +145,6 @@ int op_exxx(opcode_args arg)
 
 int op_fxxx(opcode_args arg)
 {
-
     switch (arg.NN) {
         case 0x07:
             verbose_opcode(arg.vm, arg.op, "V%u = get_delay()", arg.X);
