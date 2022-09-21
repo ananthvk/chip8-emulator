@@ -1,8 +1,8 @@
 #include "opcodes.h"
-#include "opcodes_8xxx.h"
 
 #include <stdio.h>
 
+#include "opcodes_8xxx.h"
 
 op_fptr op_table[] = {
     op_0xxx, op_1xxx, op_2xxx, op_3xxx, op_4xxx, op_5xxx, op_6xxx, op_7xxx,
@@ -14,6 +14,7 @@ op_fptr op_8xxx_table[] = {
     op_8xxx_6, op_8xxx_7, op_NOP,    op_NOP,    op_NOP,    op_NOP,
     op_NOP,    op_NOP,    op_8xxx_E, op_NOP,
 };
+
 // These functions return 1 if the opcode execution was successful
 // otherwise returns 0.
 
@@ -164,4 +165,34 @@ int op_exxx(chip8_vm *vm, uint16_t op)
     }
 }
 
-int op_fxxx(chip8_vm *vm, uint16_t op) {}
+int op_fxxx(chip8_vm *vm, uint16_t op)
+{
+    uint8_t X = get_first_identifier(op);
+    uint8_t NN = get_constant_NN(op);
+
+    switch (NN) {
+        case 0x07:
+            verbose_opcode(vm, op, "V%u = get_delay()", X);
+            break;
+        case 0x0A:
+            break;
+        case 0x15:
+            break;
+        case 0x18:
+            break;
+        case 0x1E:
+            break;
+        case 0x29:
+            break;
+        case 0x33:
+            break;
+        case 0x55:
+            break;
+        case 0x65:
+            break;
+
+        default:
+            return 0;
+    }
+    return 1;
+}
