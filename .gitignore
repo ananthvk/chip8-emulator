@@ -1,0 +1,10 @@
+*.txt
+*.ROM
+**/*.ROM
+**/*.txt
+*.exe
+**/*.exe
+*.o
+**/*.o
+.vscode/
+roms/
