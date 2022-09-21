@@ -2,12 +2,13 @@
 #include <stdlib.h>
 
 #include "cpu.h"
+#include "opcodes.h"
 #include "vm.h"
 int main(int argc, char *argv[])
 {
     int bytes_loaded = 0;
 
-    uint16_t opcode;
+    uint16_t opcode = 0;
     // Check if the rom file name is given or not
     if (argc != 2) {
         printf("Usage: ./chip8 rom_file\n");
@@ -26,8 +27,13 @@ int main(int argc, char *argv[])
     // Loop over all the instructions and execute them
     do {
         opcode = vm_get_instruction(&vm);
-        cpu_execute(&vm, opcode);
+        if (cpu_execute(&vm, opcode) == 0) {
+            printf("| 0x%0*x | 0x%0*x | ", HEX_DISPLAY_SIZE, vm.PC,
+                   HEX_DISPLAY_SIZE, opcode);
+            printf("Unknown OP Code\n");
+        }
 
     } while (vm_advance_program_counter(&vm, 2) &&
              (vm.PC - VM_START_ADDRESS) < bytes_loaded);
+    return 0;
 }

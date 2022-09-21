@@ -11,6 +11,7 @@
 // Stack size for the VM, should not exceed 255 
 // as stack pointer is 8 bits and its max value is 255
 #define VM_STACK_SIZE 16
+#define HEX_DISPLAY_SIZE 4
 
 
 struct chip8_vm{

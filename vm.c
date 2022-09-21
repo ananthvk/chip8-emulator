@@ -57,6 +57,6 @@ int vm_advance_program_counter(chip8_vm *vm, uint16_t delta)
 }
 void vm_panic(const char *message, int exit_code)
 {
-    printf("Chip-8 VM: Panic - %s\n", message);
+    printf("CRITICAL: Chip-8 VM: Panic - %s\n", message);
     exit(exit_code);
 }
