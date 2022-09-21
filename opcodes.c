@@ -18,146 +18,125 @@ op_fptr op_8xxx_table[] = {
 // These functions return 1 if the opcode execution was successful
 // otherwise returns 0.
 
-int op_NOP(chip8_vm *vm, uint16_t op)
+int op_NOP(opcode_args arg)
 {
-    verbose_opcode(vm, op, "NOP");
+    verbose_opcode(arg.vm, arg.op, "NOP");
     return 0;
 }
 
-int op_0xxx(chip8_vm *vm, uint16_t op)
+int op_0xxx(opcode_args arg)
 {
-    if (op == 0x0000) {
-        return op_NOP(vm, op);
+    if (arg.op == 0x0000) {
+        return op_NOP(arg);
     }
-    else if (op == 0x00E0) {
-        verbose_opcode(vm, op, "clear display");
+    else if (arg.op == 0x00E0) {
+        verbose_opcode(arg.vm, arg.op, "clear display");
         return 1;
     }
-    else if (op == 0x00E0) {
-        verbose_opcode(vm, op, "return");
+    else if (arg.op == 0x00E0) {
+        verbose_opcode(arg.vm, arg.op, "return");
         return 1;
     }
     else {
-        verbose_opcode(vm, op, "call machine code @ 0x%0*x", HEX_DISPLAY_SIZE,
-                       get_constant_NNN(op));
+        verbose_opcode(arg.vm, arg.op, "call machine code @ 0x%0*x",
+                       HEX_DISPLAY_SIZE, get_constant_NNN(arg.op));
         return 1;
     }
 }
 
-int op_1xxx(chip8_vm *vm, uint16_t op)
+int op_1xxx(opcode_args arg)
 {
-    verbose_opcode(vm, op, "goto 0x%0*x", HEX_DISPLAY_SIZE,
-                   get_constant_NNN(op));
+    verbose_opcode(arg.vm, arg.op, "goto 0x%0*x", HEX_DISPLAY_SIZE,
+                   get_constant_NNN(arg.op));
     return 1;
 }
 
-int op_2xxx(chip8_vm *vm, uint16_t op)
+int op_2xxx(opcode_args arg)
 {
-    verbose_opcode(vm, op, "call subroutine @ 0x%0*x", HEX_DISPLAY_SIZE,
-                   get_constant_NNN(op));
+    verbose_opcode(arg.vm, arg.op, "call subroutine @ 0x%0*x", HEX_DISPLAY_SIZE,
+                   get_constant_NNN(arg.op));
     return 1;
 }
 
-int op_3xxx(chip8_vm *vm, uint16_t op)
+int op_3xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
-    verbose_opcode(vm, op, "if (V%u == %u) skip", X, NN);
+    verbose_opcode(arg.vm, arg.op, "if (V%u == %u) skip", arg.X, arg.NN);
     return 1;
 }
 
-int op_4xxx(chip8_vm *vm, uint16_t op)
+int op_4xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
-    verbose_opcode(vm, op, "if (V%u != %u) skip", X, NN);
+    verbose_opcode(arg.vm, arg.op, "if (V%u != %u) skip", arg.X, arg.NN);
     return 1;
 }
 
-int op_5xxx(chip8_vm *vm, uint16_t op)
+int op_5xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    if (get_constant_N(op) == 0) {
-        verbose_opcode(vm, op, "if (V%u == V%u) skip", X, Y);
+    if (get_constant_N(arg.op) == 0) {
+        verbose_opcode(arg.vm, arg.op, "if (V%u == V%u) skip", arg.X, arg.Y);
         return 1;
     }
     return 0;
 }
 
-int op_6xxx(chip8_vm *vm, uint16_t op)
+int op_6xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
-    verbose_opcode(vm, op, "V%u = %u", X, NN);
+    verbose_opcode(arg.vm, arg.op, "V%u = %u", arg.X, arg.NN);
     return 1;
 }
 
-int op_7xxx(chip8_vm *vm, uint16_t op)
+int op_7xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
-    verbose_opcode(vm, op, "V%u += %u", X, NN);
+    verbose_opcode(arg.vm, arg.op, "V%u += %u", arg.X, arg.NN);
     return 1;
 }
-int op_8xxx(chip8_vm *vm, uint16_t op)
+int op_8xxx(opcode_args arg)
 {
-    return (*op_8xxx_table[get_constant_N(op)])(vm, op);
+    return (*op_8xxx_table[get_constant_N(arg.op)])(arg);
 }
 
-int op_9xxx(chip8_vm *vm, uint16_t op)
+int op_9xxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    if (get_constant_N(op) == 0) {
-        verbose_opcode(vm, op, "if (V%u != V%u) skip", X, Y);
+    if (get_constant_N(arg.op) == 0) {
+        verbose_opcode(arg.vm, arg.op, "if (V%u != V%u) skip", arg.X, arg.Y);
         return 1;
     }
     return 0;
 }
 
-int op_axxx(chip8_vm *vm, uint16_t op)
+int op_axxx(opcode_args arg)
 {
-    uint16_t NNN = get_constant_NNN(op);
-    verbose_opcode(vm, op, "I = 0x%0*x", HEX_DISPLAY_SIZE, NNN);
+    verbose_opcode(arg.vm, arg.op, "I = 0x%0*x", HEX_DISPLAY_SIZE, arg.NNN );
     return 1;
 }
 
-int op_bxxx(chip8_vm *vm, uint16_t op)
+int op_bxxx(opcode_args arg)
 {
-    uint16_t NNN = get_constant_NNN(op);
-    verbose_opcode(vm, op, "PC = V0 + %u", NNN);
+    verbose_opcode(arg.vm, arg.op, "PC = V0 + %u", arg.NNN);
     return 1;
 }
 
-int op_cxxx(chip8_vm *vm, uint16_t op)
+int op_cxxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
-    verbose_opcode(vm, op, "V%u = rand() & %u", X, NN);
+    verbose_opcode(arg.vm, arg.op, "V%u = rand() & %u", arg.X, arg.NN);
     return 1;
 }
 
-int op_dxxx(chip8_vm *vm, uint16_t op)
+int op_dxxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_second_identifier(op);
-    uint8_t N = get_constant_N(op);
-    verbose_opcode(vm, op, "draw(V%u, V%u, %u)", X, Y, N);
+    verbose_opcode(arg.vm, arg.op, "draw(V%u, V%u, %u)", arg.X, arg.Y, arg.N);
     return 1;
 }
 
-int op_exxx(chip8_vm *vm, uint16_t op)
+int op_exxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
 
-    if (NN == 0x9E) {
-        verbose_opcode(vm, op, "if (key() == V%u) skip", X);
+    if (arg.NN == 0x9E) {
+        verbose_opcode(arg.vm, arg.op, "if (key() == V%u) skip", arg.X);
         return 1;
     }
-    else if (NN == 0xA1) {
-        verbose_opcode(vm, op, "if (key() != V%u) skip", X);
+    else if (arg.NN == 0xA1) {
+        verbose_opcode(arg.vm, arg.op, "if (key() != V%u) skip", arg.X);
         return 1;
     }
     else {
@@ -165,14 +144,12 @@ int op_exxx(chip8_vm *vm, uint16_t op)
     }
 }
 
-int op_fxxx(chip8_vm *vm, uint16_t op)
+int op_fxxx(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t NN = get_constant_NN(op);
 
-    switch (NN) {
+    switch (arg.NN) {
         case 0x07:
-            verbose_opcode(vm, op, "V%u = get_delay()", X);
+            verbose_opcode(arg.vm, arg.op, "V%u = get_delay()", arg.X);
             break;
         case 0x0A:
             break;

@@ -5,25 +5,25 @@
 #include<stdint.h>
 #include<stdarg.h>
 
-typedef int (*op_fptr)(chip8_vm *vm, uint16_t op);
+typedef int (*op_fptr)(opcode_args arg);
 
-int op_NOP(chip8_vm *vm, uint16_t op);
-int op_0xxx(chip8_vm *vm, uint16_t op);
-int op_1xxx(chip8_vm *vm, uint16_t op);
-int op_2xxx(chip8_vm *vm, uint16_t op);
-int op_3xxx(chip8_vm *vm, uint16_t op);
-int op_4xxx(chip8_vm *vm, uint16_t op);
-int op_5xxx(chip8_vm *vm, uint16_t op);
-int op_6xxx(chip8_vm *vm, uint16_t op);
-int op_7xxx(chip8_vm *vm, uint16_t op);
-int op_8xxx(chip8_vm *vm, uint16_t op);
-int op_9xxx(chip8_vm *vm, uint16_t op);
-int op_axxx(chip8_vm *vm, uint16_t op);
-int op_bxxx(chip8_vm *vm, uint16_t op);
-int op_cxxx(chip8_vm *vm, uint16_t op);
-int op_dxxx(chip8_vm *vm, uint16_t op);
-int op_exxx(chip8_vm *vm, uint16_t op);
-int op_fxxx(chip8_vm *vm, uint16_t op);
+int op_NOP(opcode_args arg);
+int op_0xxx(opcode_args arg);
+int op_1xxx(opcode_args arg);
+int op_2xxx(opcode_args arg);
+int op_3xxx(opcode_args arg);
+int op_4xxx(opcode_args arg);
+int op_5xxx(opcode_args arg);
+int op_6xxx(opcode_args arg);
+int op_7xxx(opcode_args arg);
+int op_8xxx(opcode_args arg);
+int op_9xxx(opcode_args arg);
+int op_axxx(opcode_args arg);
+int op_bxxx(opcode_args arg);
+int op_cxxx(opcode_args arg);
+int op_dxxx(opcode_args arg);
+int op_exxx(opcode_args arg);
+int op_fxxx(opcode_args arg);
 
 extern op_fptr op_8xxx_table[];
 extern op_fptr op_table[]; 

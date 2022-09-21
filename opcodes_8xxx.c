@@ -1,62 +1,46 @@
 #include "opcodes_8xxx.h"
-int op_8xxx_0(chip8_vm *vm, uint16_t op)
+int op_8xxx_0(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u = V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u = V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_1(chip8_vm *vm, uint16_t op)
+int op_8xxx_1(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u |= V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u |= V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_2(chip8_vm *vm, uint16_t op)
+int op_8xxx_2(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u &= V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u &= V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_3(chip8_vm *vm, uint16_t op)
+int op_8xxx_3(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u ^= V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u ^= V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_4(chip8_vm *vm, uint16_t op)
+int op_8xxx_4(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u += V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u += V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_5(chip8_vm *vm, uint16_t op)
+int op_8xxx_5(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u -= V%u", X, Y);
+    verbose_opcode(arg.vm,arg.op, "V%u -= V%u", arg.X, arg.Y);
     return 1;
 }
-int op_8xxx_6(chip8_vm *vm, uint16_t op)
+int op_8xxx_6(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u >>= 1", X);
+    verbose_opcode(arg.vm,arg.op, "V%u >>= 1", arg.X);
     return 1;
 }
-int op_8xxx_7(chip8_vm *vm, uint16_t op)
+int op_8xxx_7(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    uint8_t Y = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u = V%u - V%u", X, Y, X);
+    verbose_opcode(arg.vm,arg.op, "V%u = V%u - V%u", arg.X, arg.Y, arg.X);
     return 1;
 }
-int op_8xxx_E(chip8_vm *vm, uint16_t op)
+int op_8xxx_E(opcode_args arg)
 {
-    uint8_t X = get_first_identifier(op);
-    verbose_opcode(vm, op, "V%u <<= 1", X);
+    verbose_opcode(arg.vm,arg.op, "V%u <<= 1", arg.X);
     return 1;
 }

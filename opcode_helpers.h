@@ -13,4 +13,17 @@ uint8_t get_second_identifier(uint16_t op);
 uint8_t get_constant_N(uint16_t op);
 uint8_t get_constant_NN(uint16_t op);
 uint16_t get_constant_NNN(uint16_t op);
+
+struct opcode_args{
+    chip8_vm *vm;
+    uint16_t op;
+    uint8_t X;
+    uint8_t Y;
+    uint8_t N;
+    uint8_t NN;
+    uint8_t NNN;
+};
+
+typedef struct opcode_args opcode_args;
+
 #endif
