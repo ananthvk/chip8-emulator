@@ -2,6 +2,7 @@
 int op_8xxx_0(opcode_args arg)
 {
     verbose_opcode(arg.vm, arg.op, "V%u = V%u", arg.X, arg.Y);
+    arg.vm->registers[arg.X] = arg.vm->registers[arg.Y];
     return 1;
 }
 int op_8xxx_1(opcode_args arg)

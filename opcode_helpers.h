@@ -22,7 +22,7 @@ struct opcode_args {
     uint8_t Y;
     uint8_t N;
     uint8_t NN;
-    uint8_t NNN;
+    uint16_t NNN;
 };
 
 typedef struct opcode_args opcode_args;

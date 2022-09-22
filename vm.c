@@ -40,6 +40,10 @@ uint8_t get_byte(chip8_vm *vm, uint16_t address)
 uint16_t vm_get_instruction(chip8_vm *vm)
 {
     // Gets the current instruction at address PC
+    if(!vm)
+    {
+        vm_panic("INTERNAL ERROR - vm NULL", 5);
+    }
     return ((unsigned)get_byte(vm, vm->PC) << 8) | get_byte(vm, vm->PC + 1);
 }
 int vm_advance_program_counter(chip8_vm *vm, uint16_t delta)

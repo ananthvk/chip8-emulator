@@ -24,13 +24,16 @@ int main(int argc, char *argv[])
             "valid\n",
             5);
     }
+    verbose_enabled = 1;
     // Loop over all the instructions and execute them
     do {
         opcode = vm_get_instruction(&vm);
         if (cpu_execute(&vm, opcode) == 0) {
-            printf("| 0x%0*x | 0x%0*x | ", HEX_DISPLAY_SIZE, vm.PC,
-                   HEX_DISPLAY_SIZE, opcode);
-            printf("Unknown OP Code\n");
+            if (verbose_enabled) {
+                printf("| 0x%0*x | 0x%0*x | ", HEX_DISPLAY_SIZE, vm.PC,
+                       HEX_DISPLAY_SIZE, opcode);
+                printf("Unknown OP Code\n");
+            }
         }
 
     } while (vm_advance_program_counter(&vm, 2) &&

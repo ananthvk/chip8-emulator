@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -W -Wall -Wextra -pedantic -O0 -ggdb3
+CFLAGS := -W -Wall -Wextra -pedantic -O0 -ggdb3# -fsanitize=address
 debug: build
 build: vm.c main.c cpu.c opcodes.c opcode_helpers.c opcodes_8xxx.c
 	$(CC) $(CFLAGS) vm.c -c -o vm.o
