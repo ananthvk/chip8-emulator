@@ -8,3 +8,5 @@
 **/*.o
 .vscode/
 roms/
+libraries/
+*.dll

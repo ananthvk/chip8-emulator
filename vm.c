@@ -25,6 +25,7 @@ int vm_load(chip8_vm *vm, const char *filename)
                      VM_MEMORY_SIZE - VM_START_ADDRESS, fp);
     }
     vm_panic("vm is NULL, Internal Error in vm_load", 6);
+    fclose(fp);
     return 0;
 }
 
