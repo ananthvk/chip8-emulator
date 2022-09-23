@@ -3,7 +3,10 @@
 #include <stdint.h>
 
 #include "vm.h"
-// NOTE: I have not bothered to check if vm is NULL in the code as it is
-// expected that vm is non-NULL
+/*
+Executes a single opcode instruction on the given vm by calling the appropriate
+function Internally it uses a function pointer table to call the function for
+the op
+*/
 int cpu_execute(chip8_vm *vm, uint16_t op);
 #endif

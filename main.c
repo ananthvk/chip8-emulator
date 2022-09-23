@@ -84,16 +84,16 @@ int main(int argc, char *argv[])
                             break;
                         case SDLK_h:
                             rect.w -= 10;
-                            if(rect.w < 0) rect.w = 0;
+                            if (rect.w < 0) rect.w = 0;
                             break;
-                         case SDLK_j:
+                        case SDLK_j:
                             rect.h += 10;
                             break;
                         case SDLK_k:
                             rect.h -= 10;
-                            if(rect.h < 0) rect.h = 0;
+                            if (rect.h < 0) rect.h = 0;
                             break;
-                         case SDLK_l:
+                        case SDLK_l:
                             rect.w += 10;
                             break;
                         case SDLK_ESCAPE:

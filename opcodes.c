@@ -5,6 +5,11 @@
 
 #include "opcodes_8xxx.h"
 
+// The opcode function pointer table
+// This function pointer array stores the function corresponding to a opcode's
+// identification In op_table, the first 4 bits are used to determine the
+// function to call. In op_8xxx_table, the last 4 bits are used to determine the
+// function to call.
 op_fptr op_table[] = {
     op_0xxx, op_1xxx, op_2xxx, op_3xxx, op_4xxx, op_5xxx, op_6xxx, op_7xxx,
     op_8xxx, op_9xxx, op_axxx, op_bxxx, op_cxxx, op_dxxx, op_exxx, op_fxxx,

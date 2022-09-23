@@ -29,13 +29,11 @@ int op_8xxx_4(opcode_args arg)
     uint8_t X = arg.vm->registers[arg.X];
     uint8_t Y = arg.vm->registers[arg.Y];
     // TODO: Check that these carry / VF / overflow functions are correct
-    if(((int)X + (int)Y) > 255)
-    {
+    if (((int)X + (int)Y) > 255) {
         // Check if a overflow occurs
         arg.vm->registers[0xF] = 1;
     }
-    else
-    {
+    else {
         // No overflow has occured
         arg.vm->registers[0xF] = 0;
     }
@@ -47,13 +45,11 @@ int op_8xxx_5(opcode_args arg)
     verbose_opcode(arg.vm, arg.op, "V%u -= V%u", arg.X, arg.Y);
     uint8_t X = arg.vm->registers[arg.X];
     uint8_t Y = arg.vm->registers[arg.Y];
-    if(X < Y)
-    {
+    if (X < Y) {
         // Overflow will occur when performing Vx - Vy
         arg.vm->registers[0xF] = 1;
     }
-    else
-    {
+    else {
         arg.vm->registers[0xF] = 0;
     }
     arg.vm->registers[arg.X] -= arg.vm->registers[arg.Y];
@@ -72,16 +68,15 @@ int op_8xxx_7(opcode_args arg)
     verbose_opcode(arg.vm, arg.op, "V%u = V%u - V%u", arg.X, arg.Y, arg.X);
     uint8_t X = arg.vm->registers[arg.X];
     uint8_t Y = arg.vm->registers[arg.Y];
-    if(X > Y)
-    {
+    if (X > Y) {
         // Overflow will occur when performing Vx - Vy
         arg.vm->registers[0xF] = 1;
     }
-    else
-    {
+    else {
         arg.vm->registers[0xF] = 0;
     }
-    arg.vm->registers[arg.X] = arg.vm->registers[arg.Y] - arg.vm->registers[arg.X];
+    arg.vm->registers[arg.X] =
+        arg.vm->registers[arg.Y] - arg.vm->registers[arg.X];
     return 1;
 }
 int op_8xxx_E(opcode_args arg)

@@ -4,6 +4,7 @@
 
 #include "opcode_helpers.h"
 #include "vm.h"
+// Functions implementing opcode instructions for 8xxx series
 
 int op_8xxx_0(opcode_args arg);
 int op_8xxx_1(opcode_args arg);

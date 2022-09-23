@@ -31,11 +31,36 @@ struct chip8_vm {
 
 typedef struct chip8_vm chip8_vm;
 
+// Initialize the vm, by setting all memory and variables to 0
+// and setting the program counter(PC) to the start address
 void vm_init(chip8_vm *vm);
+
+/*
+Loads a rom file into the memory of the given vm
+Returns 1 if success, 0 on failure
+*/
 int vm_load(chip8_vm *vm, const char *filename);
+
+/*
+Get a single byte from the memory of the vm at the specified address
+*/
 uint8_t get_byte(chip8_vm *vm, uint16_t address);
+
+/*
+Get a single instruction or two bytes from the location of the program counter
+(PC)
+*/
 uint16_t vm_get_instruction(chip8_vm *vm);
+
+/*
+Advances the program counter by the given delta.
+If the program counter reaches the end of memory, 0 is returned
+*/
 int vm_advance_program_counter(chip8_vm *vm, uint16_t delta);
+
+/*
+To stop and exit execution of program in case of any serious errors
+*/
 void vm_panic(const char *message, int exit_code);
-void verbose_opcode(chip8_vm *vm, uint16_t op, const char *format, ...);
+
 #endif
