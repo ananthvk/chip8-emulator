@@ -10,3 +10,5 @@
 roms/
 libraries/
 *.dll
+**/*.dll
+build/
