@@ -11,6 +11,10 @@
 int main(int argc, char *argv[])
 {
     int bytes_loaded = 0;
+    if (argc != 2) {
+        printf("Usage: ./chip8 rom_file\n");
+        exit(10);
+    }
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         vm_panic("Unable to initialize graphics library", 16);
@@ -32,10 +36,6 @@ int main(int argc, char *argv[])
 
     uint16_t opcode = 0;
     // Check if the rom file name is given or not
-    if (argc != 2) {
-        printf("Usage: ./chip8 rom_file\n");
-        exit(10);
-    }
     // Initialize and load the memory of the VM
     chip8_vm vm;
     vm_init(&vm);
