@@ -3,11 +3,13 @@
 
 #include "cpu.h"
 #include "opcodes.h"
+#include "graphics.h"
 #include "vm.h"
 #define SDL_MAIN_HANDLED
 
 #include "sdl2/SDL.h"
-
+extern SDL_Window *window;
+extern SDL_Renderer *renderer;
 int main(int argc, char *argv[])
 {
     int bytes_loaded = 0;
@@ -15,23 +17,8 @@ int main(int argc, char *argv[])
         printf("Usage: ./chip8 rom_file\n");
         exit(10);
     }
+    graphics_initialize();
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        vm_panic("Unable to initialize graphics library", 16);
-    }
-    SDL_Window *window =
-        SDL_CreateWindow("CHIP 8 - VirtualMachine", SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
-    if (!window) {
-        printf("SDL Error: %s\n", SDL_GetError());
-        vm_panic("SDL Error", 16);
-    }
-    SDL_Renderer *renderer = SDL_CreateRenderer(
-        window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!renderer) {
-        printf("SDL Error: %s\n", SDL_GetError());
-        vm_panic("SDL Error", 16);
-    }
     SDL_Event e;
 
     uint16_t opcode = 0;
@@ -121,8 +108,6 @@ int main(int argc, char *argv[])
 
     } while (vm_advance_program_counter(&vm, 2) &&
              (vm.PC - VM_START_ADDRESS) < bytes_loaded);
+    graphics_close();
     return 0;
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 }
