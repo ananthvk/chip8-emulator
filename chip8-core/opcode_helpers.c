@@ -15,7 +15,7 @@ void verbose_opcode(chip8_vm *vm, uint16_t op, const char *format, ...)
     if (vm) {
         va_list arguments;
         va_start(arguments, format);
-        printf("Changed dll| 0x%0*x | 0x%0*x | ", HEX_DISPLAY_SIZE, vm->PC,
+        printf("| 0x%0*x | 0x%0*x | ", HEX_DISPLAY_SIZE, vm->PC,
                HEX_DISPLAY_SIZE, op);
         vprintf(format, arguments);
         printf("\n");

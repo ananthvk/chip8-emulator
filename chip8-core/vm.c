@@ -13,6 +13,9 @@ void vm_init(chip8_vm *vm)
     memset(vm->registers, 0, sizeof(vm->registers));
     memset(vm->stack, 0, sizeof(vm->stack));
     memset(vm->memory, 0, sizeof(vm->memory));
+    memset(vm->graphics_memory, 0, sizeof(vm->graphics_memory));
+
+    memcpy(&vm->memory[VM_SPRITE_ADDRESS], &sprites[0], 80);
 }
 int vm_load(chip8_vm *vm, const char *filename)
 {

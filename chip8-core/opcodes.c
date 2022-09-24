@@ -231,6 +231,12 @@ int op_fxxx(opcode_args arg)
         case 0x29:
             verbose_opcode(arg.vm, arg.op, "I = sprite_addr[V%u] NOT_IMPL",
                            arg.X);
+            uint8_t X = arg.vm->registers[arg.X];
+            if(X > 15)
+            {
+                vm_panic("Invalid I = sprite_address(), Not less than equal 15", 9);
+            }
+            arg.vm->I = VM_SPRITE_ADDRESS + (X * 5);
             break;
         case 0x33:
             verbose_opcode(arg.vm, arg.op,

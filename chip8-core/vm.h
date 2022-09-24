@@ -7,17 +7,21 @@
 #define VM_MEMORY_SIZE 4096
 // Location 512
 #define VM_START_ADDRESS 0x200
+#define VM_STACK_SIZE 16
+#define VM_SPRITE_ADDRESS 16 // Arbitrary, keep it below 512-80
+#define HEX_DISPLAY_SIZE 4
 #define VM_NUMBER_OF_REGISTERS 16
+#define VM_GRAPHICS_WIDTH 64
+#define VM_GRAPHICS_HEIGHT 32
 // Stack size for the VM, should not exceed 255
 // as stack pointer is 8 bits and its max value is 255
-#define VM_STACK_SIZE 16
-#define HEX_DISPLAY_SIZE 4
 
 struct chip8_vm {
     // Memory, register and stacks
     uint8_t memory[VM_MEMORY_SIZE];
     uint8_t registers[VM_NUMBER_OF_REGISTERS];
     uint16_t stack[VM_STACK_SIZE];
+    uint8_t graphics_memory[VM_GRAPHICS_HEIGHT * VM_GRAPHICS_WIDTH];
 
     // Some other special purpose registers
     uint8_t timer_delay;
@@ -63,4 +67,27 @@ To stop and exit execution of program in case of any serious errors
 */
 void vm_panic(const char *message, int exit_code);
 
+
+// clang-format off
+// stores these sprites from location 16(arbitrary)
+// In the main memory
+static uint8_t sprites []= {
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+// clang-format on
 #endif
