@@ -33,6 +33,9 @@ uint8_t get_constant_NN(uint16_t op);
 Eg: ANNN, this function returns NNN (in hexadecimal)*/
 uint16_t get_constant_NNN(uint16_t op);
 
+void set_verbose();
+void unset_verbose();
+
 struct opcode_args {
     chip8_vm *vm;
     uint16_t op;

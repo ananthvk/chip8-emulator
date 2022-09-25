@@ -1,6 +1,7 @@
 #ifndef VM_H_
 #define VM_H_
 #include <stdint.h>
+#include <time.h>
 
 // Memory limit for the VM, should not exceed 65535
 // as PC, program counter is 16 bits unsigned integer
@@ -13,6 +14,7 @@
 #define VM_NUMBER_OF_REGISTERS 16
 #define VM_GRAPHICS_WIDTH 64
 #define VM_GRAPHICS_HEIGHT 32
+#define VM_KEYBOARD_NUM_KEYS 16
 // Stack size for the VM, should not exceed 255
 // as stack pointer is 8 bits and its max value is 255
 
@@ -22,10 +24,17 @@ struct chip8_vm {
     uint8_t registers[VM_NUMBER_OF_REGISTERS];
     uint16_t stack[VM_STACK_SIZE];
     uint8_t graphics_memory[VM_GRAPHICS_HEIGHT * VM_GRAPHICS_WIDTH];
+    uint8_t keyboard_state[VM_KEYBOARD_NUM_KEYS];
+    uint8_t last_key_pressed;
+    time_t delay_timer_timestamp;
 
     // Some other special purpose registers
     uint8_t timer_delay;
     uint8_t timer_sound;
+    // Flag to check whether to draw to screen or not
+    uint8_t is_dirty;
+    // Flag to check if the vm is waiting for a key input
+    uint8_t is_blocking;
     uint16_t I;
     // Program counter
     uint16_t PC;
@@ -66,6 +75,9 @@ int vm_advance_program_counter(chip8_vm *vm, uint16_t delta);
 To stop and exit execution of program in case of any serious errors
 */
 void vm_panic(const char *message, int exit_code);
+
+// Reset the state of the keyboard
+void vm_reset_keyboard(chip8_vm *vm);
 
 
 #endif

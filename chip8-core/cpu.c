@@ -5,7 +5,6 @@
 
 #include "opcode_helpers.h"
 #include "opcodes.h"
-
 int cpu_execute(chip8_vm *vm, uint16_t op)
 {
     if (!vm) {

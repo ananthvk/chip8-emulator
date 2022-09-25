@@ -1,8 +1,9 @@
 #include "opcodes.h"
 
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "opcodes_8xxx.h"
 
@@ -162,8 +163,11 @@ int op_9xxx(opcode_args arg)
 int op_axxx(opcode_args arg)
 {
     verbose_opcode(arg.vm, arg.op, "I = 0x%0*x", HEX_DISPLAY_SIZE, arg.NNN);
-    if (arg.NNN == 0 || arg.NNN <= 512) {
-        vm_panic("Invalid set I to address, location <= 512", 9);
+    if (arg.NNN == 0 || arg.NNN < 510) {
+        vm_panic("Invalid set I to address, location < 512", 9);
+    }
+    if (arg.NNN == 511) {
+        printf("WARNING: Setting I = 511\n");
     }
     arg.vm->I = arg.NNN;
     return 1;
@@ -228,19 +232,28 @@ int op_dxxx(opcode_args arg)
         // printf("%d\n",line);
         draw_bits(arg, x, y + i, line);
     }
+    arg.vm->is_dirty = 1;
     return 1;
 }
 
 int op_exxx(opcode_args arg)
 {
     if (arg.NN == 0x9E) {
-        verbose_opcode(arg.vm, arg.op, "if (key() == V%u) skip NOT_IMPL",
-                       arg.X);
+        verbose_opcode(arg.vm, arg.op, "if (key() == V%u) skip", arg.X);
+        int key = arg.vm->registers[arg.X];
+        if (arg.vm->keyboard_state[key] == 1) {
+            // The key is in pressed state, skip the current line
+            arg.vm->PC += 2;
+        }
         return 1;
     }
     else if (arg.NN == 0xA1) {
-        verbose_opcode(arg.vm, arg.op, "if (key() != V%u) skip NOT_IMPL",
-                       arg.X);
+        verbose_opcode(arg.vm, arg.op, "if (key() != V%u) skip", arg.X);
+        int key = arg.vm->registers[arg.X];
+        if (arg.vm->keyboard_state[key] == 0) {
+            // The key is not in pressed state, skip the current line
+            arg.vm->PC += 2;
+        }
         return 1;
     }
     else {
@@ -252,13 +265,39 @@ int op_fxxx(opcode_args arg)
 {
     switch (arg.NN) {
         case 0x07:
-            verbose_opcode(arg.vm, arg.op, "V%u = get_delay() NOT_IMPL", arg.X);
+            // When getting the value of the delay timer, decrement the value of
+            // the delay timer according to the timestamp
+            verbose_opcode(arg.vm, arg.op, "V%u = get_delay()", arg.X);
+            time_t now = time(NULL);
+            time_t time_elapsed = now - arg.vm->delay_timer_timestamp;
+            // Every 16.6 ms, the counter has to be decremented for a refresh
+            // rate of 60Hz
+            // arg.vm->timer_delay -= (time_elapsed/16.6);
+            int reductions = arg.vm->timer_delay - (time_elapsed / 16.6);
+            arg.vm->registers[arg.X] = (reductions <= 0) ? 0 : reductions;
             break;
         case 0x0A:
-            verbose_opcode(arg.vm, arg.op, "V%u = get_key() NOT_IMPL", arg.X);
+            verbose_opcode(arg.vm, arg.op, "V%u = get_key()", arg.X);
+            if(arg.vm->last_key_pressed < 16)
+            {
+                // A valid key was pressed
+                arg.vm->registers[arg.X] = arg.vm->last_key_pressed;
+                arg.vm->is_blocking = 0;
+                arg.vm->last_key_pressed = 20;
+            }
+            else
+            {
+                // wait for the next keypress
+                arg.vm->is_blocking = 1;
+                // To re-execute this opcode when a key press arives
+                arg.vm->PC -= 2;
+            }
             break;
         case 0x15:
-            verbose_opcode(arg.vm, arg.op, "delay_timer(V%u) NOT_IMPL", arg.X);
+            verbose_opcode(arg.vm, arg.op, "delay_timer(V%u)", arg.X);
+            // Set the value of the delay timer
+            arg.vm->timer_delay = arg.vm->registers[arg.X];
+            arg.vm->delay_timer_timestamp = time(NULL);
             break;
         case 0x18:
             verbose_opcode(arg.vm, arg.op, "sound_timer(V%u) NOT_IMPL", arg.X);
@@ -298,8 +337,8 @@ int op_fxxx(opcode_args arg)
             break;
         case 0x65:
             verbose_opcode(arg.vm, arg.op,
-                           "Fill V0 to V%u, from address I(0x%0*x)",
-                           arg.X, HEX_DISPLAY_SIZE, arg.vm->I);
+                           "Fill V0 to V%u, from address I(0x%0*x)", arg.X,
+                           HEX_DISPLAY_SIZE, arg.vm->I);
             for (int i = 0; i <= arg.X; i++) {
                 arg.vm->registers[i] = arg.vm->memory[arg.vm->I + i];
             }

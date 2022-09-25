@@ -33,11 +33,17 @@ void vm_init(chip8_vm *vm)
     vm->I = 0;
     vm->timer_delay = 0;
     vm->timer_sound = 0;
+    vm->last_key_pressed = 20; // Outside the actual range
+    vm->delay_timer_timestamp = 0;
+    vm->is_dirty = 1;
+    vm->is_blocking = 0;
+    // Zero all the arrays
     memset(vm->registers, 0, sizeof(vm->registers));
     memset(vm->stack, 0, sizeof(vm->stack));
     memset(vm->memory, 0, sizeof(vm->memory));
     memset(vm->graphics_memory, 0, sizeof(vm->graphics_memory));
-
+    memset(vm->keyboard_state, 0, sizeof(vm->keyboard_state));
+    // Copy the sprite data into the main memory
     memcpy(&vm->memory[VM_SPRITE_ADDRESS], &sprites[0], 80);
 }
 int vm_load(chip8_vm *vm, const char *filename)
@@ -86,4 +92,9 @@ void vm_panic(const char *message, int exit_code)
 {
     printf("CRITICAL: Chip-8 VM: Panic - %s\n", message);
     exit(exit_code);
+}
+
+void vm_reset_keyboard(chip8_vm *vm)
+{
+    memset(vm->keyboard_state, 0, sizeof(vm->keyboard_state));
 }
