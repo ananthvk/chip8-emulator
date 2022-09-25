@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         printf("Usage: ./chip8 rom_file\n");
         exit(10);
     }
-    graphics_initialize();
+    graphics_initialize(64, 32);
 
     SDL_Event e;
 
@@ -111,6 +111,9 @@ int main(int argc, char *argv[])
                     switch (e.key.keysym.sym) {
                         case SDLK_e:
                             to_execute = 1;
+                            for(int i = 0; i < 16; i++)
+                                printf("V[%x]:%u ", i, vm.registers[i]);
+                            printf("\n");
                             break;
                     }
                 }

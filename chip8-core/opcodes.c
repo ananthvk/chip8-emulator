@@ -1,5 +1,6 @@
 #include "opcodes.h"
 
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,6 +38,7 @@ int op_0xxx(opcode_args arg)
     }
     else if (arg.op == 0x00E0) {
         verbose_opcode(arg.vm, arg.op, "clear display");
+        memset(arg.vm->graphics_memory, 0, sizeof(arg.vm->graphics_memory));
         return 1;
     }
     else if (arg.op == 0x00E0) {
@@ -63,8 +65,8 @@ int op_1xxx(opcode_args arg)
 {
     verbose_opcode(arg.vm, arg.op, "goto 0x%0*x", HEX_DISPLAY_SIZE, arg.NNN);
 
-    if (arg.NNN == 0 || arg.NNN <= 512) {
-        vm_panic("Invalid goto, less than or equal to 512", 9);
+    if (arg.NNN == 0 || arg.NNN < 512) {
+        vm_panic("Invalid goto, less than to 512", 9);
     }
     arg.vm->PC = arg.NNN - 2;
     return 1;
@@ -83,8 +85,8 @@ int op_2xxx(opcode_args arg)
         // instruction gets executed The instruction at NNN does not get
         // executed The only issue is if unsigned overflow incase NNN = 0 (which
         // should not happen as programs start at location 512)
-        if (arg.NNN == 0 || arg.NNN <= 512) {
-            vm_panic("Invalid call subroutine instruction, location <= 512", 9);
+        if (arg.NNN == 0 || arg.NNN < 512) {
+            vm_panic("Invalid call subroutine instruction, location < 512", 9);
         }
         arg.vm->PC = arg.NNN - 2;
     }
@@ -192,21 +194,21 @@ void draw_bits(opcode_args arg, int x, int y, uint8_t line)
     int array_index = 0;
     uint8_t last_bit;
     int bitflip_occured = 0;
-    for(int i = 7; i >= 0; i--)
-    {
+    for (int i = 7; i >= 0; i--) {
         // Extract each bit from the left, by creating a mask using left shift
-        // Modulo VM_GRAPHICS_WIDTH so that if printing near the edge of the screen, the pixel wraps to the other side
-        array_index = (VM_GRAPHICS_WIDTH * y) + ((x + (7-i)) % VM_GRAPHICS_WIDTH);
+        // Modulo VM_GRAPHICS_WIDTH so that if printing near the edge of the
+        // screen, the pixel wraps to the other side
+        array_index =
+            (VM_GRAPHICS_WIDTH * y) + ((x + (7 - i)) % VM_GRAPHICS_WIDTH);
         last_bit = arg.vm->graphics_memory[array_index];
         arg.vm->graphics_memory[array_index] ^= line & (1 << i);
-        if((last_bit == 1) && (arg.vm->graphics_memory[array_index] == 1))
-        {
+        if ((last_bit == 1) && (arg.vm->graphics_memory[array_index] == 1)) {
             // Bit flip has occured from set to unset
             bitflip_occured = 1;
-            //printf("Bit filp occured\n");
+            // printf("Bit filp occured\n");
         }
     }
-    if(bitflip_occured)
+    if (bitflip_occured)
         arg.vm->registers[0xF] = 1;
     else
         arg.vm->registers[0xF] = 0;
@@ -218,15 +220,13 @@ int op_dxxx(opcode_args arg)
     uint16_t I = arg.vm->I;
     // To store a single row of 8 bits
     uint8_t line = 0;
-    verbose_opcode(arg.vm, arg.op, "draw(V%u, V%u, %u)", arg.X, arg.Y,
-                   arg.N);
+    verbose_opcode(arg.vm, arg.op, "draw(V%u, V%u, %u)", arg.X, arg.Y, arg.N);
     uint8_t x = arg.vm->registers[arg.X];
     uint8_t y = arg.vm->registers[arg.Y];
-    for(int i = 0; i < arg.N; i++)
-    {
-        line = arg.vm->memory[I+i];
-        //printf("%d\n",line);
-        draw_bits(arg, x, y+i, line);
+    for (int i = 0; i < arg.N; i++) {
+        line = arg.vm->memory[I + i];
+        // printf("%d\n",line);
+        draw_bits(arg, x, y + i, line);
     }
     return 1;
 }
@@ -239,7 +239,8 @@ int op_exxx(opcode_args arg)
         return 1;
     }
     else if (arg.NN == 0xA1) {
-        verbose_opcode(arg.vm, arg.op, "if (key() != V%u) skip ", arg.X);
+        verbose_opcode(arg.vm, arg.op, "if (key() != V%u) skip NOT_IMPL",
+                       arg.X);
         return 1;
     }
     else {
@@ -267,30 +268,41 @@ int op_fxxx(opcode_args arg)
             arg.vm->I += arg.vm->registers[arg.X];
             break;
         case 0x29:
-            verbose_opcode(arg.vm, arg.op, "I = sprite_addr[V%u]",
-                           arg.X);
+            verbose_opcode(arg.vm, arg.op, "I = sprite_addr[V%u]", arg.X);
             uint8_t X = arg.vm->registers[arg.X];
-            if(X > 15)
-            {
+            if (X > 15) {
                 printf("X is %u\n", X);
-                vm_panic("Invalid I = sprite_address(), X Not less than equal 15", 9);
+                vm_panic(
+                    "Invalid I = sprite_address(), X Not less than equal 15",
+                    9);
             }
             arg.vm->I = VM_SPRITE_ADDRESS + (X * 5);
             break;
         case 0x33:
             verbose_opcode(arg.vm, arg.op,
-                           "store BCD of V%u at I(0x%0*x), I+1, I+2 NOT_IMPL",
-                           arg.X, HEX_DISPLAY_SIZE, arg.vm->I);
+                           "store BCD of V%u at I(0x%0*x), I+1, I+2", arg.X,
+                           HEX_DISPLAY_SIZE, arg.vm->I);
+            uint8_t val = arg.vm->registers[arg.X];
+            arg.vm->memory[arg.vm->I] = val / 100;
+            arg.vm->memory[arg.vm->I + 1] = (val / 10) % 10;
+            arg.vm->memory[arg.vm->I + 2] = val % 10;
             break;
         case 0x55:
             verbose_opcode(arg.vm, arg.op,
-                           "Store V0 to V%u at address I(0x%0*x) NOT_IMPL",
-                           arg.X, HEX_DISPLAY_SIZE, arg.vm->I);
+                           "Store V0 to V%u at address I(0x%0*x)", arg.X,
+                           HEX_DISPLAY_SIZE, arg.vm->I);
+            // I have not added any error checking here
+            for (int i = 0; i <= arg.X; i++) {
+                arg.vm->memory[arg.vm->I + i] = arg.vm->registers[i];
+            }
             break;
         case 0x65:
             verbose_opcode(arg.vm, arg.op,
-                           "Fill V0 to V%u, from address I(0x%0*x) NOT_IMPL",
+                           "Fill V0 to V%u, from address I(0x%0*x)",
                            arg.X, HEX_DISPLAY_SIZE, arg.vm->I);
+            for (int i = 0; i <= arg.X; i++) {
+                arg.vm->registers[i] = arg.vm->memory[arg.vm->I + i];
+            }
             break;
 
         default:

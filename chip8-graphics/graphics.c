@@ -9,7 +9,7 @@ SDL_Rect *rects = NULL;
 size_t n_rects = 0;
 
 
-int graphics_initialize()
+int graphics_initialize(int width, int height)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL Error: %s\n", SDL_GetError());
@@ -17,7 +17,7 @@ int graphics_initialize()
     }
     window =
         SDL_CreateWindow("CHIP 8 - VirtualMachine", SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_SHOWN);
+                         SDL_WINDOWPOS_CENTERED, width*CELL_SIZE, height*CELL_SIZE, SDL_WINDOW_SHOWN);
     if (!window) {
         printf("SDL Error: %s\n", SDL_GetError());
         exit(16);
@@ -57,8 +57,8 @@ void update_rects(uint8_t *point_array, size_t n, int width)
             exit(1);
         }
         for (size_t i = 0; i < n; i++) {
-            rects[i].h = CELL_SIZE - 1;
-            rects[i].w = CELL_SIZE - 1;
+            rects[i].h = BOX_SIZE;
+            rects[i].w = BOX_SIZE;
             rects[i].x = (i % width) * CELL_SIZE;
             rects[i].y = (i / width) * CELL_SIZE;
         }
@@ -71,8 +71,8 @@ void update_rects(uint8_t *point_array, size_t n, int width)
                 rects[i].w = 0;
             }
             else {
-                rects[i].h = CELL_SIZE - 1;
-                rects[i].w = CELL_SIZE - 1;
+                rects[i].h = BOX_SIZE;
+                rects[i].w = BOX_SIZE;
             }
         }
     }
