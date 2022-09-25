@@ -8,6 +8,7 @@ SDL_Renderer *renderer = NULL;
 SDL_Rect *rects = NULL;
 size_t n_rects = 0;
 
+
 int graphics_initialize()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -44,7 +45,7 @@ void clear_screen()
     SDL_RenderClear(renderer);
 }
 void present() { SDL_RenderPresent(renderer); }
-void update_rects(uint8_t *point_array, size_t n)
+void update_rects(uint8_t *point_array, size_t n, int width)
 {
     // Sets rects array if NULL otherwise updates the existing rects
     if (!point_array) return;
@@ -56,10 +57,10 @@ void update_rects(uint8_t *point_array, size_t n)
             exit(1);
         }
         for (size_t i = 0; i < n; i++) {
-            rects[i].h = 15 - 1;
-            rects[i].w = 15 - 1;
-            rects[i].x = (i % 64) * 15;
-            rects[i].y = (i / 64) * 15;
+            rects[i].h = CELL_SIZE - 1;
+            rects[i].w = CELL_SIZE - 1;
+            rects[i].x = (i % width) * CELL_SIZE;
+            rects[i].y = (i / width) * CELL_SIZE;
         }
     }
     else {
@@ -70,8 +71,8 @@ void update_rects(uint8_t *point_array, size_t n)
                 rects[i].w = 0;
             }
             else {
-                rects[i].h = 15 - 1;
-                rects[i].w = 15 - 1;
+                rects[i].h = CELL_SIZE - 1;
+                rects[i].w = CELL_SIZE - 1;
             }
         }
     }

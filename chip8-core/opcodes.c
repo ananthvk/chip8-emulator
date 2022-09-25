@@ -186,10 +186,48 @@ int op_cxxx(opcode_args arg)
     return 1;
 }
 
+void draw_bits(opcode_args arg, int x, int y, uint8_t line)
+{
+    // Draw a row of bits with width 8 starting at x,y
+    int array_index = 0;
+    uint8_t last_bit;
+    int bitflip_occured = 0;
+    for(int i = 7; i >= 0; i--)
+    {
+        // Extract each bit from the left, by creating a mask using left shift
+        // Modulo VM_GRAPHICS_WIDTH so that if printing near the edge of the screen, the pixel wraps to the other side
+        array_index = (VM_GRAPHICS_WIDTH * y) + ((x + (7-i)) % VM_GRAPHICS_WIDTH);
+        last_bit = arg.vm->graphics_memory[array_index];
+        arg.vm->graphics_memory[array_index] ^= line & (1 << i);
+        if((last_bit == 1) && (arg.vm->graphics_memory[array_index] == 1))
+        {
+            // Bit flip has occured from set to unset
+            bitflip_occured = 1;
+            //printf("Bit filp occured\n");
+        }
+    }
+    if(bitflip_occured)
+        arg.vm->registers[0xF] = 1;
+    else
+        arg.vm->registers[0xF] = 0;
+}
+
 int op_dxxx(opcode_args arg)
 {
-    verbose_opcode(arg.vm, arg.op, "draw(V%u, V%u, %u) NOT_IMPL", arg.X, arg.Y,
+    // As I does not change after executing this code
+    uint16_t I = arg.vm->I;
+    // To store a single row of 8 bits
+    uint8_t line = 0;
+    verbose_opcode(arg.vm, arg.op, "draw(V%u, V%u, %u)", arg.X, arg.Y,
                    arg.N);
+    uint8_t x = arg.vm->registers[arg.X];
+    uint8_t y = arg.vm->registers[arg.Y];
+    for(int i = 0; i < arg.N; i++)
+    {
+        line = arg.vm->memory[I+i];
+        //printf("%d\n",line);
+        draw_bits(arg, x, y+i, line);
+    }
     return 1;
 }
 
@@ -229,12 +267,13 @@ int op_fxxx(opcode_args arg)
             arg.vm->I += arg.vm->registers[arg.X];
             break;
         case 0x29:
-            verbose_opcode(arg.vm, arg.op, "I = sprite_addr[V%u] NOT_IMPL",
+            verbose_opcode(arg.vm, arg.op, "I = sprite_addr[V%u]",
                            arg.X);
             uint8_t X = arg.vm->registers[arg.X];
             if(X > 15)
             {
-                vm_panic("Invalid I = sprite_address(), Not less than equal 15", 9);
+                printf("X is %u\n", X);
+                vm_panic("Invalid I = sprite_address(), X Not less than equal 15", 9);
             }
             arg.vm->I = VM_SPRITE_ADDRESS + (X * 5);
             break;

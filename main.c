@@ -93,10 +93,8 @@ int main(int argc, char *argv[])
         rects[i].y = (i / VM_GRAPHICS_WIDTH) * CELL_SIZE;
     }
     */
-   update_rects(vm.graphics_memory, sizeof(vm.graphics_memory));
+   update_rects(vm.graphics_memory, sizeof(vm.graphics_memory), VM_GRAPHICS_WIDTH);
 
-    int cursor_x = 0;
-    int cursor_y = 0;
 
     int is_running = 1;
     do {
@@ -114,22 +112,12 @@ int main(int argc, char *argv[])
                         case SDLK_e:
                             to_execute = 1;
                             break;
-                        case SDLK_d:
-                            printf("Doing it %d++", cursor_x);
-                            cursor_x ++;
-                            vm.graphics_memory[cursor_x + (VM_GRAPHICS_WIDTH * cursor_y)] = 1;
-                            break;
-                        case SDLK_a:
-                            printf("Doing it %d--", cursor_x);
-                            cursor_x --;
-                            vm.graphics_memory[cursor_x + (VM_GRAPHICS_WIDTH * cursor_y)] = 1;
-                            break;
                     }
                 }
             }
 
             clear_screen();
-            update_rects(vm.graphics_memory, sizeof(vm.graphics_memory));
+            update_rects(vm.graphics_memory, sizeof(vm.graphics_memory), VM_GRAPHICS_WIDTH);
             display_rects();
             present();
 
