@@ -64,67 +64,51 @@ void handle_keyboard(chip8_vm *vm, SDL_Event e, int *is_running)
         switch (e.key.keysym.sym) {
             case SDLK_0:
                 vm->last_key_pressed = 0;
-                vm->keyboard_state[0] = 1;
                 break;
             case SDLK_1:
                 vm->last_key_pressed = 1;
-                vm->keyboard_state[1] = 1;
                 break;
             case SDLK_2:
                 vm->last_key_pressed = 2;
-                vm->keyboard_state[2] = 1;
                 break;
             case SDLK_3:
                 vm->last_key_pressed = 3;
-                vm->keyboard_state[3] = 1;
                 break;
             case SDLK_4:
                 vm->last_key_pressed = 4;
-                vm->keyboard_state[4] = 1;
                 break;
             case SDLK_5:
                 vm->last_key_pressed = 5;
-                vm->keyboard_state[5] = 1;
                 break;
             case SDLK_6:
                 vm->last_key_pressed = 6;
-                vm->keyboard_state[6] = 1;
                 break;
             case SDLK_7:
                 vm->last_key_pressed = 7;
-                vm->keyboard_state[7] = 1;
                 break;
             case SDLK_8:
                 vm->last_key_pressed = 8;
-                vm->keyboard_state[8] = 1;
                 break;
             case SDLK_9:
                 vm->last_key_pressed = 9;
-                vm->keyboard_state[9] = 1;
                 break;
             case SDLK_a:
                 vm->last_key_pressed = 0xa;
-                vm->keyboard_state[0xa] = 1;
                 break;
             case SDLK_b:
                 vm->last_key_pressed = 0xb;
-                vm->keyboard_state[0xb] = 1;
                 break;
             case SDLK_c:
                 vm->last_key_pressed = 0xc;
-                vm->keyboard_state[0xc] = 1;
                 break;
             case SDLK_d:
                 vm->last_key_pressed = 0xd;
-                vm->keyboard_state[0xd] = 1;
                 break;
             case SDLK_e:
                 vm->last_key_pressed = 0xe;
-                vm->keyboard_state[0xe] = 1;
                 break;
             case SDLK_f:
                 vm->last_key_pressed = 0xf;
-                vm->keyboard_state[0xf] = 1;
                 break;
             default:
                 return;
@@ -165,6 +149,8 @@ int main(int argc, char *argv[])
             "valid\n",
             5);
     }
+    printf("ROM name: %s\n", argv[1]);
+    printf("Bytes loaded: %d\n", bytes_loaded);
     // For the test suite
     set_verbose();
     // vm.memory[511] = mode;
@@ -185,7 +171,6 @@ int main(int argc, char *argv[])
 
     int is_running = 1;
     do {
-        vm_reset_keyboard(&vm);
         while (SDL_PollEvent(&e)) {
             handle_keyboard(&vm, e, &is_running);
         }
@@ -200,6 +185,41 @@ int main(int argc, char *argv[])
             present();
             vm.is_dirty = 0;
         }
+        vm_reset_keyboard(&vm);
+        SDL_PumpEvents();
+        uint8_t *keys = SDL_GetKeyboardState(NULL);
+        if(keys[SDLK_0])
+            vm.keyboard_state[0] = 1;
+        if(keys[SDLK_1])
+            vm.keyboard_state[1] = 1;
+        if(keys[SDLK_2])
+            vm.keyboard_state[2] = 1;
+        if(keys[SDLK_3])
+            vm.keyboard_state[3] = 1;
+        if(keys[SDLK_4])
+            vm.keyboard_state[4] = 1;
+        if(keys[SDLK_5])
+            vm.keyboard_state[5] = 1;
+        if(keys[SDLK_6])
+            vm.keyboard_state[6] = 1;
+        if(keys[SDLK_7])
+            vm.keyboard_state[7] = 1;
+        if(keys[SDLK_8])
+            vm.keyboard_state[8] = 1;
+        if(keys[SDLK_9])
+            vm.keyboard_state[9] = 1;
+        if(keys[SDLK_a])
+            vm.keyboard_state[0xa] = 1;
+        if(keys[SDLK_b])
+            vm.keyboard_state[0xb] = 1;
+        if(keys[SDLK_c])
+            vm.keyboard_state[0xc] = 1;
+        if(keys[SDLK_d])
+            vm.keyboard_state[0xd] = 1;
+        if(keys[SDLK_e])
+            vm.keyboard_state[0xe] = 1;
+        if(keys[SDLK_f])
+            vm.keyboard_state[0xf] = 1;
 
         opcode = vm_get_instruction(&vm);
         if (cpu_execute(&vm, opcode) == 0) {
@@ -223,8 +243,8 @@ int main(int argc, char *argv[])
         }
 
 
-    } while (vm_advance_program_counter(&vm, 2) &&
-             (vm.PC - VM_START_ADDRESS) < bytes_loaded);
+    } while (vm_advance_program_counter(&vm, 2));// &&
+             //(vm.PC - VM_START_ADDRESS) < bytes_loaded);
     graphics_close();
     return 0;
 }
